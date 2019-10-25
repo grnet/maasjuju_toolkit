@@ -1,0 +1,12 @@
+**/__pycache__
+**.pyc
+**.db
+.tox
+**.egg-info
+
+.venv
+venv
+.eggs
+
+.vscode
+.idea
