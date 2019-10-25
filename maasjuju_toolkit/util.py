@@ -98,7 +98,7 @@ def session():
         return __session
 
     except MaaSError as e:
-        exit_with_error(f'Could not connect to MaaS: {e}')
+        exit_with_error('Could not connect to MaaS: {}'.format(e))
 
 
 def query_machines(machine_filters):

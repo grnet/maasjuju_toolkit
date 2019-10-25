@@ -22,7 +22,7 @@ def get_machine(system_id):
     try:
         m = session().Machine.read(system_id=system_id)
     except MaaSError as e:
-        exit_with_error(f'[{system_id}] [ERROR] {e}')
+        exit_with_error('[{}] [ERROR] {}'.format(system_id, e))
 
     print(json.dumps({
         'system_id': system_id,

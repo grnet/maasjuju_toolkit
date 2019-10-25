@@ -24,11 +24,11 @@ def ipmi_sel(cmd, machines):
 
     results = query_machines(machines)
     if not results:
-        exit_with_error(f'[INFO] No matching machines found.')
+        exit_with_error('[INFO] No matching machines found.')
 
     # update machines, one by one
     for r in results:
-        print(f'## [{r.system_id}] [{r.hostname}]')
+        print('## [{}] [{}]'.format(r.system_id, r.hostname))
 
         command_line = [
             'ipmi-sel', '-h', r.power_address,

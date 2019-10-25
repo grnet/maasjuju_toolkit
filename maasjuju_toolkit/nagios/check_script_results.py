@@ -49,7 +49,8 @@ def check_script_results(machines):
         # some skipped
         which = 'critical' if count['Failed'] else 'warning'
 
-        output[which].append(f'{hostname} has {json.dumps(count)} tests')
+        output[which].append('{} has {} tests'.format(
+            hostname, json.dumps(count)))
 
     print_nagios(output)
 

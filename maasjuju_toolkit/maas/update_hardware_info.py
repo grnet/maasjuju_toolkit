@@ -26,7 +26,7 @@ def update_hardware_info(machine, new_cpus, new_ram):
 
     results = query_machines(machine)
     if not results:
-        exit_with_error(f'[INFO] No matching machines found.')
+        exit_with_error('[INFO] No matching machines found.')
 
     # update machines, one by one
     for r in results:
@@ -39,12 +39,12 @@ def update_hardware_info(machine, new_cpus, new_ram):
                 update['memory'] = new_ram * 1024
 
             session().Machine.update(system_id=r.system_id, **update)
-            print(f'[{r.system_id}] [{r.hostname}]'
-                  f' [OK] Updated hardware information: {update}')
+            print('[{}] [{}] [OK] Updated Hardware Info: {}'.format(
+                r.system_id, r.hostname, update))
 
         except MaaSError as e:
-            exit_with_error(
-                f'[{r.system_id}] [{r.hostname}] [ERROR] MaaS: {e}')
+            exit_with_error('[{}] [{}] [ERROR] MaaS: {}'.format(
+                r.system_id, r.hostname, e))
 
     print('Done. Refresh machine list with "jmt_refresh".')
 

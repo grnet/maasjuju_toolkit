@@ -59,7 +59,8 @@ def get_script_results(machine, skip):
 
     machines = query_machines(query)
     if not machines:
-        exit_with_error(f'UNKNOWN: No matching machine: {machine}', code=3)
+        exit_with_error(
+            'UNKNOWN: No matching machine: {}'.format(machine), code=3)
 
     api = session()
 
@@ -119,17 +120,14 @@ def set_suppressed_id(system_id, script_id, suppressed):
 
     try:
         session().NodeScriptResult.update(
-            system_id=system_id, id=script_id, suppressed=suppressed
-        )
-        print(
-            f'[{system_id}] Set suppressed={suppressed} for script {script_id}'
-        )
+            system_id=system_id, id=script_id, suppressed=suppressed)
+
+        print('[{}] Set suppressed={} for script {}'.format(
+            system_id, suppressed, script_id))
 
     except MaaSError as e:
-        print(
-            f'[{system_id}] Failed to set suppressed={suppressed}'
-            f'for script {script_id}: {e.__class__.__name__}: {e}'
-        )
+        print('[{}] Failed to set suppressed={} for script {}: {}: {}'.format(
+            system_id, suppressed, script_id, e.__class__.__name__, e))
 
 
 def delete_results(machines, skip):
@@ -153,13 +151,11 @@ def delete_result_id(system_id, script_id):
         session().NodeScriptResult.delete(
             system_id=system_id, id=script_id
         )
-        print(f'[{system_id}] Deleted script {script_id}')
+        print('[{}] Deleted script {}'.format(system_id, script_id))
 
     except MaaSError as e:
-        print(
-            f'[{system_id}] Failed to delete script {script_id}: '
-            f'{e.__class__.__name__}: {e}'
-        )
+        print('[{}] Failed to delete script {}: {}: {}'.format(
+            system_id, script_id, e.__class__.__name__, e))
 
 ##################################################################
 
@@ -187,7 +183,7 @@ def script_results(command, machine, script_id, skip):
         delete_result_id(machine, script_id)
 
     else:
-        exit_with_error(f'Unknown command: {command}')
+        exit_with_error('Unknown command: {}'.format(command))
 
 
 def main():
@@ -212,11 +208,11 @@ def main():
     for x in ['Installation', 'Passed', 'Commissioning',
               'Testing', 'Skipped', 'Aborted']:
         parser.add_argument(
-            f'--no-{x.lower()}',
+            '--no-{}'.format(x.lower()),
             const=x,
             action='append_const',
             dest='skip',
-            help=f'Ignore {x} script results'
+            help='Ignore {} script results'.format(x)
         )
 
     # set skip categories, always skip running tests
