@@ -26,7 +26,7 @@ def add_tags(new_tag, machines):
 
     results = query_machines(machines)
     if not results:
-        exit_with_error(f'[INFO] No matching machines found.')
+        exit_with_error('[INFO] No matching machines found.')
 
     try:
         # create tag name if needed
@@ -34,24 +34,25 @@ def add_tags(new_tag, machines):
         names = [t['name'] for t in all_tags]
 
         if new_tag not in names:
-            print(f'[INFO] Tag {new_tag} does not exist, creating...')
+            print('[INFO] Tag {} does not exist, creating...'.format(new_tag))
             session().Tags.create(
                 name=new_tag,
                 description='Helper tag for nagios checks'
             )
 
     except MaaSError as e:
-        exit_with_error(f'[ERROR] MaaS: {e}')
+        exit_with_error('[ERROR] MaaS: {}'.format(e))
 
     # updates machines, one by one
     for r in results:
         try:
             session().Tag.update_nodes(name=new_tag, system_id=r.system_id)
-            print(f'[{r.system_id}] [{r.hostname}] [OK] Added tag {new_tag}')
+            print('[{}] [{}] [OK] Added tag {}'.format(
+                r.system_id, r.hostname, new_tag))
 
         except MaaSError as e:
-            exit_with_error(
-                f'[{r.system_id}] [{r.hostname}] [ERROR] MaaS: {e}')
+            exit_with_error('[{}] [{}] [ERROR] MaaS: {}'.format(
+                r.system_id, r.hostname, e))
 
     print('Done. Refresh machine list with "mjt_refresh".')
 

@@ -102,7 +102,7 @@ def get_juju_status(f_name):
             return json.load(fin)
 
     except json.JSONDecodeError as e:
-        exit_with_error(f'[EXCEPTION] Invalid input file: {e}')
+        exit_with_error('[EXCEPTION] Invalid input file: {}'.format(e))
 
 
 def parse_pynag_hosts(f_name):
@@ -122,7 +122,8 @@ def parse_pynag_hosts(f_name):
             result[address] = hostname
 
     except (TypeError, ValueError) as e:
-        exit_with_error(f'[EXCEPTION] Invalid Nagios hosts format: {e}')
+        exit_with_error(
+            '[EXCEPTION] Invalid Nagios hosts format: {}'.format(e))
 
     return result
 
@@ -144,7 +145,8 @@ def parse_pynag_services(f_name):
             result[hostname].append(service)
 
     except (TypeError, ValueError) as e:
-        exit_with_error(f'[EXCEPTION] Invalid Nagios hosts format: {e}')
+        exit_with_error(
+            '[EXCEPTION] Invalid Nagios hosts format: {}'.format(e))
 
     return result
 
@@ -183,7 +185,7 @@ def nagios_juju_deps(juju_status, pynag_hosts, pynag_services, subnet,
                     for ip in machine['ip-addresses']:
                         if IPAddress(ip_address) in IPNetwork(subnet):
                             ip_address = ip
-                            print(f'Will use IP address {ip_address}')
+                            print('Will use IP address', ip_address)
                             break
 
                     if not ip_address:
@@ -231,9 +233,8 @@ def nagios_juju_deps(juju_status, pynag_hosts, pynag_services, subnet,
                 # adds host dependencies
                 output += (
                     HOST_DEPENDENCY_TEMPLATE
-                    .replace('{COMMENT}',
-                             f'({container["instance-id"]}) '
-                             f'-> {machine["display-name"]}')
+                    .replace('{COMMENT}', '({}) => ({})'.format(
+                        container['instance-id'], machine['display-name']))
                     .replace('{PARENT}', p_host)
                     .replace('{CHILD}', d_host)
                 )
@@ -242,9 +243,9 @@ def nagios_juju_deps(juju_status, pynag_hosts, pynag_services, subnet,
                     output += (
                         SERVICE_DEPENDENCY_TEMPLATE
                         .replace(
-                            '{COMMENT}',
-                            f'({container["instance-id"]}/{service}) -> '
-                            f'{machine["display-name"]}/{WELL_KNOWN_SERVICE}')
+                            '{COMMENT}', '({}/{}) => ({}/{})'.format(
+                                container['instance-id'], service,
+                                machine['display-name'], WELL_KNOWN_SERVICE))
                         .replace('{PARENT_HOST}', p_host)
                         .replace('{PARENT_SERVICE}', WELL_KNOWN_SERVICE)
                         .replace('{DEPENDENT_HOST}', d_host)
@@ -253,7 +254,7 @@ def nagios_juju_deps(juju_status, pynag_hosts, pynag_services, subnet,
 
     except KeyError as e:
         exit_with_error(
-            f'[EXCEPTION] Input data is not JSON-formatted Juju status: {e}')
+            '[EXCEPTION] Invalid Juju status format: {}'.format(e))
 
     try:
         with open(outfile, 'w') as f_out:
@@ -261,7 +262,7 @@ def nagios_juju_deps(juju_status, pynag_hosts, pynag_services, subnet,
 
         print('[SUCCESS] Configuration was written to', outfile)
     except OSError as e:
-        print(f'[EXCEPTION] Writing to {outfile} failed: {e}')
+        print('[EXCEPTION] Writing to {} failed: {}'.format(outfile, e))
 
 
 def main():

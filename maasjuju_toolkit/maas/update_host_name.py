@@ -23,17 +23,18 @@ def update_host_name(machine, new_hostname):
 
     results = query_machines([machine])
     if not results:
-        exit_with_error(f'[INFO] No matching machines found.')
+        exit_with_error('[INFO] No matching machines found.')
 
     # update machines, one by one
     r = results[0]
     try:
         session().Machine.update(system_id=r.system_id, hostname=new_hostname)
-        print(f'[{r.system_id}] [{r.hostname}] [OK]'
-              f' Updated hostname to {new_hostname}')
+        print('[{}] [{}] [OK] Updated hostname to {}'.format(
+            r.system_id, r.hostname, new_hostname))
 
     except MaaSError as e:
-        exit_with_error(f'[{r.system_id}] [{r.hostname}] [ERROR] MaaS: {e}')
+        exit_with_error('[{}] [{}] [ERROR] MaaS: {}'.format(
+            r.system_id, r.hostname, e))
 
     print('Done. Refresh machine list with "mjt_refresh".')
 

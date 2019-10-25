@@ -26,7 +26,7 @@ def update_domain_name(machines, new_domain):
 
     results = query_machines(machines)
     if not results:
-        exit_with_error(f'[INFO] No matching machines found.')
+        exit_with_error('[INFO] No matching machines found.')
 
     try:
         # create domain name if needed
@@ -34,21 +34,23 @@ def update_domain_name(machines, new_domain):
         names = [d['name'] for d in all_domains]
 
         if new_domain not in names:
-            print(f'[INFO] Domain {new_domain} does not exist, creating...')
+            print('[INFO] Domain {} does not exist, creating...'.format(
+                new_domain))
             session().Domains.create(name=new_domain, authoritative=True)
 
     except MaaSError as e:
-        exit_with_error(f'[ERROR] MaaS: {e}')
+        exit_with_error('[ERROR] MaaS: {}'.format(e))
 
     # update machines, one by one
     for r in results:
         try:
             session().Machine.update(system_id=r.system_id, domain=new_domain)
-            print(f'[{r.system_id}] [{r.hostname}] [OK] Set to {new_domain}')
+            print('[{}] [{}] [OK] Set to {}'.format(
+                r.system_id, r.hostname, new_domain))
 
         except MaaSError as e:
-            exit_with_error(
-                f'[{r.system_id}] [{r.hostname}] [ERROR] MaaS: {e}')
+            exit_with_error('[{}] [{}] [ERROR] MaaS: {}'.format(
+                r.system_id, r.hostname, e))
 
     print('Done. Refresh machine list with "mjt_refresh".')
 

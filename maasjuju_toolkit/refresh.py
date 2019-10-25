@@ -33,7 +33,7 @@ def refresh_db():
         powers = s.Machines.power_parameters()
 
     except MaaSError as e:
-        exit_with_error(f'Could not GET machines: {e}')
+        exit_with_error('Could not GET machines: {}'.format(e))
 
     # Updates database info
     new_data = []
@@ -43,8 +43,8 @@ def refresh_db():
             m_power = powers[system_id]
 
             if is_virtual_machine(m_power):
-                print(f'[{system_id}] [{m.get("hostname")}]'
-                      f' [INFO] skipping, virtual machine')
+                print('[{}] [{}] [INFO] Skipping, virtual machine'.format(
+                    system_id, m.get('hostname')))
                 continue
 
             new_data.append(dict(
@@ -63,10 +63,10 @@ def refresh_db():
             ))
 
         except KeyError as e:
-            print(f'[{system_id}] [ERROR] Missing information: {e}')
+            print('[{}] [ERROR] Missing information: {}'.format(system_id, e))
 
     # Adds new data to the database
-    print(f'Updating the database: "{Config.sqlite_db}"')
+    print('Updating the database: "{}"'.format(Config.sqlite_db))
     MaaSCache.insert(new_data).on_conflict_replace().execute()
     db.commit()
 
