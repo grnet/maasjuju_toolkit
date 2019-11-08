@@ -29,9 +29,6 @@ $ mjt_clone_config --source SOURCE --dest DEST --storage --interfaces [--force]
 """
 
 import argparse
-import logging
-
-# logging.basicConfig(level=logging.DEBUG)
 
 from maasjuju_toolkit.util import (
     query_machines, exit_with_error, session, MaaSError)
@@ -64,14 +61,12 @@ def clone_config(args):
             exit_with_error('[ERROR] Aborted!')
 
     try:
-        result = session().Machines.clone(
-            # source=source.system_id,
-            # destination=[x.system_id for x in destinations],
+        session().Machines.clone(
+            source=source.system_id,
+            destinations=[x.system_id for x in destinations],
             interfaces=args.interfaces,
             storage=args.storage
         )
-
-        print(result)
 
     except MaaSError as e:
         exit_with_error(f'[ERROR] MaaS: {e}')
@@ -94,7 +89,7 @@ def main():
     parser.add_argument('--force', action='store_true', default=False,
                         help='Do not ask for confirmation')
 
-    clone_config(args = parser.parse_args())
+    clone_config(args=parser.parse_args())
 
 
 if __name__ == '__main__':
