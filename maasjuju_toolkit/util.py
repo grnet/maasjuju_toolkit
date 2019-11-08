@@ -123,6 +123,9 @@ def query_machines(machine_filters):
     See examples in EXAMPLES.md"""
     rows = MaaSCache.select().order_by(MaaSCache.fqdn)
 
+    if isinstance(machine_filters, str):
+        machine_filters = [machine_filters]
+
     if machine_filters:
         # search fqdn, system id
 
