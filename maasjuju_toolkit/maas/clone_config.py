@@ -69,7 +69,7 @@ def clone_config(args):
         )
 
     except MaaSError as e:
-        exit_with_error(f'[ERROR] MaaS: {e}')
+        exit_with_error('[ERROR] MaaS: {}'.format(e))
 
 
 def main():
