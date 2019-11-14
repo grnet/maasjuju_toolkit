@@ -19,7 +19,8 @@ Last Update: 2019/11/08
 Description: Clone storage and/or interface configuration between machines
 
 # Usage:
-$ mjt_clone_config --source SOURCE --dest DEST --storage --interfaces [--force]
+$ mjt_clone_config --source SOURCE --storage --interfaces [--force] \
+    --destinations DEST_1 [DEST_2 ...]
 
 # Notes:
 * Machines can be matched using system id, hostname, domain name or tags.
@@ -43,7 +44,7 @@ def clone_config(args):
     elif not sources:
         exit_with_error('[ERROR] No source machine!')
 
-    destinations = query_machines(args.dest)
+    destinations = query_machines(args.destinations)
     if not destinations:
         exit_with_error('[ERROR] No destination machines!')
 
@@ -76,11 +77,11 @@ def main():
     """parses arguments and does work"""
 
     parser = argparse.ArgumentParser(
-        description='Αdd tags to many MaaS machines'
-    )
+        description='Clone MaaS machines configuration')
+
     parser.add_argument('--source', type=str, required=True,
                         help='Source machine')
-    parser.add_argument('--dest', type=str, required=True,
+    parser.add_argument('--destinations', type=str, required=True, nargs='+',
                         help='Destination machines')
     parser.add_argument('--interfaces', action='store_true', default=False,
                         help='Clone network interfaces configuration')
